@@ -26,7 +26,7 @@ Starting up terminal
 Loading Config file...
 Enter a password used to encrypt the secret tokens:
 ```
-1. Follow the onscreen prompt and enter a password. This password will be used to encrypt a configuration file where the secret tokens will be stored. After setting the password you should see the screen below.
+2. Follow the onscreen prompt and enter a password. This password will be used to encrypt a configuration file where the secret tokens will be stored. After setting the password you should see the screen below.
 ```
 Enter the number of the item you want to do: 
 Enter 1 to view OTP values
