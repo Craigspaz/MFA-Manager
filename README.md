@@ -1,6 +1,6 @@
 # MFA-Manager
 
-This tool generates One Time Pass tokens like Google Authenticator does. It currently only supports time based tokens.
+This tool generates One Time Password tokens like Google Authenticator does. It currently only supports time based tokens.
 
 ***Note: This was created for experimental purposes and should not be used in a production environment.***
 
