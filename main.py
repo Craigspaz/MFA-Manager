@@ -9,6 +9,9 @@ import base64
 from Crypto.Cipher import AES
 from Crypto import Random
 
+'''
+    Encrypts the data with the secret password
+'''
 def encrypt(raw, secret_password):
     private_key = hashlib.sha256(secret_password.encode("utf-8")).digest()
     raw = raw + (AES.block_size - len(raw) % AES.block_size) * chr(AES.block_size - len(raw) % AES.block_size)
@@ -16,6 +19,9 @@ def encrypt(raw, secret_password):
     cipher = AES.new(private_key, AES.MODE_CBC, iv)
     return base64.b64encode(iv + cipher.encrypt(raw.encode()))
 
+'''
+    Decrypts the data using the secret password
+'''
 def decrypt(cipher_text, secret_password):
     private_key = hashlib.sha256(secret_password.encode("utf-8")).digest()
     encoded_text = base64.b64decode(cipher_text)
@@ -24,7 +30,11 @@ def decrypt(cipher_text, secret_password):
     value = (cipher.decrypt(encoded_text[AES.block_size:])).decode('utf-8')
     return value[:-ord(value[len(value)-1:])]
 
+'''
+    Manages the configuration file
+'''
 class Config_File:
+
     def __init__(self):
         print("Loading Config file...")
         first_opening = False
@@ -60,6 +70,9 @@ class Config_File:
             self.items.append(tmp)
         config_file.close()
 
+    '''
+        Adds item into the configuration file
+    '''
     def add_item(self, name, url=None, secret=None):
         if secret != None or url != None and secret != url:
             self.items.append({"Name": name, "URL": str(url), "SECRET": str(secret)})
@@ -79,6 +92,9 @@ class Config_File:
         config_file.write(str(encrypted_payload.decode("utf-8")))
         config_file.close()
 
+    '''
+        Removes item from the configuration file
+    '''
     def remove_item(self, item_name):
         config_file = open("./config.txt", "w")
         item_to_remove = None
@@ -98,7 +114,11 @@ class Config_File:
             self.items.remove(item_to_remove)
 
 
+'''
+    Manages the terminal interface for the application
+'''
 class Terminal:
+
     def __init__(self):
         print("Starting up terminal")
         self.config_file = Config_File()
@@ -106,6 +126,9 @@ class Terminal:
         signal.signal(signal.SIGINT, self.sigint_handler)
         self.run()
 
+    '''
+        Runs the terminal
+    '''
     def run(self):
         while True:
             if self.current_menu == 0:
@@ -131,7 +154,9 @@ class Terminal:
                 exit(0)
 
 
-
+    '''
+        Prints out the Main Menu
+    '''
     def print_main_menu(self):
         print("Enter the number of the item you want to do: ")
         print("Enter 1 to view OTP values")
@@ -139,6 +164,9 @@ class Terminal:
         print("Enter 3 to Remove an existing OTP token")
         print("Enter 4 to quit")
 
+    '''
+        Parses input and sets the menu accordingly
+    '''
     def parse_input(self, user_input):
         try:
             value = int(user_input)
@@ -156,6 +184,9 @@ class Terminal:
             print("Value was not an integer...")
             return False
 
+    '''
+        Prints out the view token menu
+    '''
     def print_view_token_menu(self):
         print("Tokens: (Press Cntrl-C to go back to main menu)")
         print("Token Name | Current Token | Time Left")
@@ -172,6 +203,9 @@ class Terminal:
             value = totp.now()
             print(item["Name"] + " | " + str(value) + " | " + str(time_remaining))
 
+    '''
+        Prints the add new token menu
+    '''
     def print_add_new_token_menu(self):
         print("Add New Token")
         token_name = input("Enter the name of the token (this is a friendly name for you): ")
@@ -195,12 +229,17 @@ class Terminal:
             print("Value entered is not a number. Going back to main menu")
             self.current_menu = 0
 
-    
+    '''
+        Print the remove token menu
+    '''
     def print_remove_token_menu(self):
         token_name = input("Enter the name of the token that you would like to remove (Press Cntrl-C to go back to main menu): ")
         self.config_file.remove_item(token_name)
         print("Succesfully removed token")
 
+    '''
+        Handles the sigint signal (cntrl-c)
+    '''
     def sigint_handler(self, sig, frame):
         if self.current_menu != 0:
             self.current_menu = 0
